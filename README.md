@@ -1,10 +1,8 @@
 # Metodos-Numericos-I
 # Este repositorio va a servir como un archivo digital para el curso de Métodos Numéricos I de la maestría en física y tecnología avanzada de la UAEH
 
-%%%
-2.5 
-%%%
- import numpy as np
+#2.5 
+import numpy as np
 import matplotlib.pyplot as plt
 
 #Se define la función
@@ -41,9 +39,7 @@ plt.ylabel('f(x)')
 plt.legend()
 plt.show
 
-%%%
-2.8
-%%%
+#2.8
 #a)
 import numpy as np
 import matplotlib.pyplot as plt
@@ -111,3 +107,105 @@ f_x_new=(2*np.sin(x_val/2)**2)/x_val**2
 #Imprimimos el resultado
 print(f'El nuevo valor de la función, ahora es {f_x_new}')
 
+#2.11
+def naive(C,x):
+    Px=0
+    for i in range(len(C)):
+        Px=Px+C[i]*x**i
+    return Px
+coeffs= [(-11)**i for i in reversed(range(8))]
+print("El resultado usando naive es: ", naive(coeffs,11.01))
+def horner(coeffs,x):
+    #Empezamos de atrás a adelante
+    result=coeffs[-1]
+    x=11.01
+    #Iteramos con i del penúltimo al primero
+    for i in range(len(coeffs)-2,-1,-1):
+    #El algoritmo es
+        result=result*x+coeffs[i]
+    return result
+#El resultado con la regla de Horner
+horner_result=horner(coeffs,x)
+print("El resultado usando Horner es: ", horner_result)
+#Usando Horner es más preciso que de la forma naive.
+
+#2.14
+import math
+
+def taylor_sin(x,n=10):
+    #Calcula sin(x) con la serie de Taylor hasta n términos.
+    result=0
+    #Primer término
+    term=x
+    for n in range(n):
+        result +=term
+        #Términos nuevos
+        term *= -x**2/((2*n+2)*(2*n+3))
+    return result
+#
+#Evaluando en x=0.1
+x1=0.1
+sin_x1=taylor_sin(x1)
+print(f"sin({x1}) usando la serie de Taylor: {sin_x1}")
+
+# Evaluación con x=40
+k=40
+#Estamos pasando el argumento de sin a radianes
+x2=k*(math.pi/180)
+sin_x2=taylor_sin(x2)
+print(f"sin(40) usando la serie de Taylor con x= {x2}: {sin_x2}")
+
+#Comparamos el método con serie de Taylor y el valor exacto
+real_sin_x1=math.sin(x1)
+real_sin_x2=math.sin(x2)
+print(f"Valor exacto de sin({x1}):",{real_sin_x1})
+print(f"Valor exacto de sin(40): ",{real_sin_x2})
+
+#2.17
+import numpy as np
+
+# Definir x
+x = 0.5
+
+# Funciones iniciales j0(x) y j1(x)
+j0 = np.sin(x) / x
+j1 = (np.sin(x) / x**2) - (np.cos(x) / x)
+
+# Lista para almacenar los valores de jn(x)
+j_val = [j0, j1]
+
+# Recursión hacia adelante para calcular jn(x) hasta j8(x)
+for n in range(1, 8):
+    j_n = (2*n + 1) / x * j_val[-1] - j_val[-2]
+    j_val.append(j_n)
+
+# El resultado "ingenuo" de j8(0.5)
+j8_forward = j_val[-1]
+j8_forward
+# Valor de n inicial para la recursión hacia atrás
+n_max = 15
+
+# Valores arbitrarios iniciales
+j_max = 1.0
+j_max_menos_1 = 1.0
+
+# Lista para almacenar los valores de jn(x) en recursión hacia atrás
+j_backward = [j_max, j_max_menos_1]
+
+# Recursión hacia atrás desde n_max hasta n=0
+for n in range(n_max, 0, -1):
+    j_next = (2*n + 1) / x * j_backward[-1] - j_backward[-2]
+    j_backward.append(j_next)
+
+# Invertir la lista para que coincida con el orden de n
+j_backward.reverse()
+
+# Normalización
+j0_comput = j_backward[0]
+j8_comput = j_backward[8]
+
+# Normalización usando j0(0.5) real
+j8_normalizada = j8_comput * (j0 / j0_comput)
+j8_normalizada
+print(f"j8(0.5) calculado por recursión hacia adelante: {j8_forward}")
+print(f"j8(0.5) calculado por recursión hacia atrás (normalizado): {j8_normalized}")
